@@ -1,0 +1,315 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mock Test Series</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2fff4;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #b9f6ca;
+      padding: 1rem;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+      position: relative;
+    }
+    #timer {
+      position: absolute;
+      right: 1rem;
+      color: white;
+      top: 2rem;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    .container {
+      display: flex;
+      flex-direction: row;
+      padding: 1rem;
+    }
+    .question-section {
+      flex: 3;
+      padding-right: 1rem;
+    }
+    .sidebar {
+      flex: 1;
+      background-color: #e0f2f1;
+      padding: 1rem;
+      border-radius: 8px;
+    }
+    .question-box {
+      background-color: #fff;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      margin-bottom: 1rem;
+    }
+    .options label {
+      display: block;
+      margin: 0.5rem 0;
+    }
+    .btn-group button, .sidebar button, #result button {
+      margin: 0.5rem;
+      padding: 0.7rem 1.2rem;
+      border: none;
+      border-radius: 5px;
+      background-color: #00796b;
+      color: white;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.3s;
+    }
+    .btn-group button:hover, .sidebar button:hover, #result button:hover {
+      background-color: #004d40;
+    }
+    .question-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      margin-top: 1rem;
+    }
+    .question-grid div {
+      width: 30px;
+      height: 30px;
+      text-align: center;
+      line-height: 30px;
+      border-radius: 50%;
+      cursor: pointer;
+      background-color: #e0e0e0;
+      font-weight: bold;
+    }
+    .current { background-color: #2196f3 !important; color: white !important; }
+    .answered { background-color: #4caf50 !important; color: white !important; }
+    .marked { background-color: #ffeb3b !important; color: black !important; }
+    .not-answered { background-color: #f44336 !important; color: white !important; }
+    .correct { color: green; font-weight: bold; }
+    .wrong { color: red; font-weight: bold; }
+    .tick::before { content: '✅ '; }
+    .cross::before { content: '❌ '; }
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+      }
+      .question-section {
+        padding-right: 0;
+      }
+      .sidebar {
+        margin-top: 1rem;
+      }
+      .question-grid {
+        grid-template-columns: repeat(5, 1fr);
+      }
+    }
+    .title{
+      font-size:25px;
+      font-style: bold;
+    }
+  </style>
+  <script src="questions.js">
+</script>
+</head>
+<body>
+  <header>
+    <h2 class="title" id="test-title"></h2>
+  
+    <div id="timer">Time Left: 20:00</div>
+  </header>
+  <div class="container" id="main-container">
+    <div class="question-section">
+      <div id="question-box" class="question-box">
+        <h3 id="question-number"></h3>
+        <p id="question-text"></p>
+        <div class="options" id="options"></div>
+        <div class="btn-group">
+          <button onclick="markReview()">Mark for Review & Next</button>
+          <button onclick="clearResponse()">Clear Response</button>
+          <button onclick="saveNext()">Save & Next</button>
+        </div>
+      </div>
+    </div>
+    <div class="sidebar">
+      <div style="text-align:center;">
+        <p>Md Zeeshan</p>
+      </div>
+      <h4>Question Status</h4>
+      <div class="question-grid" id="question-grid"></div>
+      <br>
+      <button onclick="submitTest()">Submit</button>
+    </div>
+  </div>  <div id="result" style="display:none; padding: 1rem; background-color: #c8e6c9;">
+    <h2>Test Submitted!</h2>
+    <p id="score"></p>
+    <button onclick="location.reload()">Restart</button>
+    <button onclick="toggleReview()">Show Detailed Review</button>
+    <div id="detailed-review" style="display:none;"></div>
+  </div>  <script>
+    
+    let currentIndex = 0;
+    const answers = new Array(questions.length).fill(null);
+    const markedForReview = new Array(questions.length).fill(false);
+    const visited = new Array(questions.length).fill(false);
+
+    function loadQuestion(index) {
+      visited[index] = true;
+      currentIndex = index;
+      const question = questions[index];
+      document.getElementById("question-number").innerText = `Question No. ${index + 1}`;
+      document.getElementById("question-text").innerText = question.q;
+      const optionsHTML = question.options.map((opt, i) => {
+        return `<label><input type="radio" name="option" value="${i}" ${answers[index] == i ? 'checked' : ''}> ${opt}</label>`;
+      }).join('');
+      document.getElementById("options").innerHTML = optionsHTML;
+      updateGridColors();
+    }
+
+    function updateAnswer() {
+      const selected = document.querySelector('input[name="option"]:checked');
+      if (selected) answers[currentIndex] = parseInt(selected.value);
+    }
+
+    function saveNext() {
+      updateAnswer();
+      markedForReview[currentIndex] = false;
+      if (currentIndex < questions.length - 1) loadQuestion(currentIndex + 1);
+    }
+
+    function markReview() {
+      updateAnswer();
+      markedForReview[currentIndex] = true;
+      if (currentIndex < questions.length - 1) loadQuestion(currentIndex + 1);
+    }
+
+    function clearResponse() {
+      answers[currentIndex] = null;
+      markedForReview[currentIndex] = false;
+      loadQuestion(currentIndex);
+    }
+
+    function generateGrid() {
+      const grid = document.getElementById("question-grid");
+      grid.innerHTML = "";
+      for (let i = 0; i < questions.length; i++) {
+        const div = document.createElement("div");
+        div.innerText = i + 1;
+        div.id = `q${i}`;
+        div.addEventListener("click", () => {
+          updateAnswer();
+          loadQuestion(i);
+        });
+        grid.appendChild(div);
+      }
+    }
+
+    function updateGridColors() {
+      for (let i = 0; i < questions.length; i++) {
+        const div = document.getElementById(`q${i}`);
+        div.className = "";
+        if (i === currentIndex) div.classList.add("current");
+        else if (markedForReview[i]) div.classList.add("marked");
+        else if (answers[i] !== null) div.classList.add("answered");
+        else if (visited[i]) div.classList.add("not-answered");
+      }
+    }
+
+    function submitTest() {
+      updateAnswer();
+      clearInterval(timer);
+      let score = 0;
+      questions.forEach((q, i) => {
+        if (answers[i] === q.answer) score++;
+      });
+      const percent = ((score / questions.length) * 100).toFixed(2);
+      document.getElementById("score").innerHTML = `Marks: ${score}/${questions.length}<br>Percentage: ${percent}%`;
+
+      document.getElementById("main-container").style.display = "none";
+      document.getElementById("result").style.display = "block";
+    }
+
+  
+    function toggleReview() {
+      const review = document.getElementById("detailed-review");
+      if (review.style.display === "none") {
+        review.style.display = "block";
+        let reviewHTML = "<h3>Detailed Review</h3>";
+        questions.forEach((q, i) => {
+          const userAns = answers[i];
+          reviewHTML += `<div style='margin-bottom:1rem;'>
+            <strong>Q${i + 1}:</strong> ${q.q}<br>
+            ${q.options.map((opt, idx) => {
+              const correct = idx === q.answer;
+              const selected = idx === userAns;
+              if (selected && correct) {
+                return `<div style='color:green'>${String.fromCharCode(65 + idx)}. ${opt}</div>`;
+              } else if (selected && !correct) {
+                return `<div style='color:red'>${String.fromCharCode(65 + idx)}. ${opt}</div>`;
+              } else if (correct) {
+                return `<div style='color:green'>${String.fromCharCode(65 + idx)}. ${opt}</div>`;
+              } else {
+                return `<div>${String.fromCharCode(65 + idx)}. ${opt}</div>`;
+              }
+            }).join('')}
+            <em>Your Answer: ${userAns !== null ? q.options[userAns] : "Not Answered"}</em><br>
+            <em>Correct Answer: ${q.options[q.answer]}</em>
+          </div>`;
+        });
+        review.innerHTML = reviewHTML;
+      } else {
+        review.style.display = "none";
+      }
+    }
+
+    let totalSeconds = 20*60;
+    const timerDisplay = document.getElementById("timer");
+    const timer = setInterval(() => {
+      totalSeconds--;
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+      timerDisplay.innerText = `Time Left: ${minutes}:${seconds.toString().padStart(2, '0')}`;
+      if (totalSeconds <= 300) {
+  timerDisplay.style.color = "red";
+}
+
+      if (totalSeconds === 300) alert("Warning: Only 5 minutes left!");
+      if (totalSeconds <= 0) {
+        clearInterval(timer);
+        alert("Time's up! Test will be submitted automatically.");
+        submitTest();
+      }
+    }, 1000);
+
+    generateGrid();
+    loadQuestion(currentIndex);
+    let touchStartX = 0;
+let touchEndX = 0;
+
+function handleGesture() {
+  const swipeThreshold = 50; // Minimum distance for a swipe
+  if (touchEndX < touchStartX - swipeThreshold) {
+    // Swipe left - go to next question
+    updateAnswer();
+    if (currentIndex < questions.length - 1) loadQuestion(currentIndex + 1);
+  }
+  if (touchEndX > touchStartX + swipeThreshold) {
+    // Swipe right - go to previous question
+    updateAnswer();
+    if (currentIndex > 0) loadQuestion(currentIndex - 1);
+  }
+}
+
+// Add swipe listener to the question box
+const questionBox = document.getElementById('question-box');
+questionBox.addEventListener('touchstart', e => {
+  touchStartX = e.changedTouches[0].screenX;
+});
+questionBox.addEventListener('touchend', e => {
+  touchEndX = e.changedTouches[0].screenX;
+  handleGesture();
+});
+    document.getElementById("test-title").innerText = subjectName;
+
+  </script></body>
+</html>
