@@ -1,7 +1,7 @@
 const subjectName = "History";  // You can change this to any subject
 
 const questions = [
-      { q: "What is the capital of France?", options: ["Paris", "London", "Berlin", "Madrid"], answer: 0 },
+      { q: "What is the capital of France?", options: ["goa", "London", "Berlin", "Madrid"], answer: 0 },
       { q: "Which planet is known as the Red Planet?", options: ["Earth", "Mars", "Jupiter", "Saturn"], answer: 1 },
       { q: "Who wrote 'Hamlet'?", options: ["Shakespeare", "Milton", "Wordsworth", "Chaucer"], answer: 0 },
       { q: "H2O is the chemical formula for what?", options: ["Oxygen", "Hydrogen", "Water", "Helium"], answer: 2 },
