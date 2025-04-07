@@ -1,4 +1,4 @@
-const subjectName = "General Studies";  // You can change this to any subject
+const subjectName = "Soil";  // You can change this to any subject
 
 const questions = [
       { q: "What is the capital of France?", options: ["paris", "London", "Berlin", "Madrid"], answer: 0 },
@@ -20,5 +20,27 @@ const questions = [
       { q: "What is the value of pi?", options: ["3.14", "3.5", "3.15", "3.16"], answer: 0 },
       { q: "Who painted Mona Lisa?", options: ["Van Gogh", "Da Vinci", "Picasso", "Michelangelo"], answer: 1 },
       { q: "Which vitamin is produced in sunlight?", options: ["A", "B", "C", "D"], answer: 3 },
-      { q: "What is the speed of light?", options: ["300,000 km/s", "150,000 km/s", "200,000 km/s", "250,000 km/s"], answer: 0 }
+      { q: "What is the speed of light?", options: ["300,000 km/s", "150,000 km/s", "200,000 km/s", "250,000 km/s"], answer: 0 },
+      { q: "The bearing capacity of soil depends on:",options: ["Type of soil", "Water table position", "Foundation depth", "All of the above"], answer: 3 },
+  { 
+    q: "The most suitable soil for foundation is:", 
+    options: ["Clay", "Silt", "Sand", "Gravel"], 
+    answer: 3 
+  },
+  { 
+    q: "The consistency limits of soil are determined by:", 
+    options: ["Standard Proctor Test", "Plate Load Test", "Atterberg Limits", "Shear Box Test"], 
+    answer: 2 
+  },
+  { 
+    q: "Which soil has the highest permeability?", 
+    options: ["Clay", "Silt", "Sand", "Gravel"], 
+    answer: 3 
+  },
+  { 
+    q: "The unit of coefficient of permeability (k) in SI system is:", 
+    options: ["m²/s", "m³/s", "m/s", "m/s²"], 
+    answer: 2 
+  }
+];
     ];
