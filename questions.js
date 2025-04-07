@@ -43,4 +43,4 @@ const questions = [
     answer: 2 
   }
 ];
-    ];
+
