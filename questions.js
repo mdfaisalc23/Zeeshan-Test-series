@@ -1,4 +1,4 @@
-const subjectName = "History";  // You can change this to any subject
+const subjectName = "General Studies";  // You can change this to any subject
 
 const questions = [
       { q: "What is the capital of France?", options: ["goa", "London", "Berlin", "Madrid"], answer: 0 },
