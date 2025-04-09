@@ -1,4 +1,4 @@
-const subjectName = "Soil";  // You can change this to any subjec
+const subjectName = "General Studies";  // You can change this to any subjec
 const questions = [
   { q: "What is the chemical symbol for water?", options: ["H2O", "O2", "CO2", "NaCl"], answer: 0 },
   { q: "Which planet is known as the Red Planet?", options: ["Earth", "Mars", "Jupiter", "Saturn"], answer: 1 },
