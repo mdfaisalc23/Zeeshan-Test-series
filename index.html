@@ -30,7 +30,6 @@
       display: flex;
       flex-direction: row;
       padding: 1rem;
-      position:fixed;
     }
     .question-section {
       flex: 3;
@@ -67,13 +66,17 @@
     .btn-group button:hover, .sidebar button:hover, #result button:hover {
       background-color: #004d40;
     }
-    .question-grid {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 10px;
-      margin-top: 1rem;
-      overflow:auto;
-    }
+     .question-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  margin-top: 1rem;
+  max-height: 220px;
+  overflow-y: auto;
+  padding: 10px;
+  background-color: white; /* Light green-yellow background */
+  border-radius: 8px;
+}
     .question-grid div {
       width: 30px;
       height: 30px;
@@ -110,10 +113,36 @@
       font-size:25px;
       font-style: bold;
     }
-    . submit {
-      background-color:red;
-      align: right;
-    }
+    .btn-group button {
+  margin: 0.5rem;
+  padding: 0.7rem 1.2rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.3s;
+  color: white;
+}
+
+/* Individual button colors */
+.btn-group button:nth-child(1) { background-color: #fff176; color: black; }   /* Mark for Review (Yellow) */
+.btn-group button:nth-child(1):active { background-color: #fdd835; }
+
+.btn-group button:nth-child(2) { background-color: #64b5f6; }   /* Clear Response (Blue) */
+.btn-group button:nth-child(2):active { background-color: #1976d2; }
+
+.btn-group button:nth-child(3) { background-color: #81c784; }   /* Save & Next (Green) */
+.btn-group button:nth-child(3):active { background-color: #388e3c; }
+
+.btn-group button:nth-child(4) { background-color: #ef9a9a; }   /* Submit (Red) */
+.btn-group button:nth-child(4):active { background-color: #c62828; }
+
+#result button {
+  background-color: #00796b;
+}
+#result button:active {
+  background-color: #004d40;
+}
   </style>
   <script src="questions.js">
 </script>
@@ -134,18 +163,34 @@
           <button onclick="markReview()">Mark for Review & Next</button>
           <button onclick="clearResponse()">Clear Response</button>
           <button onclick="saveNext()">Save & Next</button>
-          <button class ="submit" onclick="submitTest()">Submit</button>
+           <button onclick="submitTest()">Submit</button>
         </div>
       </div>
     </div>
     <div class="sidebar">
       <div style="text-align:center;">
-        <p>Md Zeeshan</p>
+
+      <div style="margin-top: 1rem;">
+  <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 0.5rem;">
+    <div style="display: flex; align-items: center; gap: 5px;">
+      <div style="width: 20px; height: 20px; background-color: #2196f3; border-radius: 50%;"></div> Current
+    </div>
+    <div style="display: flex; align-items: center; gap: 5px;">
+      <div style="width: 20px; height: 20px; background-color: #4caf50; border-radius: 50%;"></div> Answered
+    </div>
+    <div style="display: flex; align-items: center; gap: 5px;">
+      <div style="width: 20px; height: 20px; background-color: #ffeb3b; border-radius: 50%;"></div> Marked
+    </div>
+    <div style="display: flex; align-items: center; gap: 5px;">
+      <div style="width: 20px; height: 20px; background-color: #f44336; border-radius: 50%;"></div> Not Answered
+    </div>
+  </div>
+</div>
       </div>
       <h4>Question Status</h4>
       <div class="question-grid" id="question-grid"></div>
       <br>
-      <button onclick="submitTest()">Submit</button>
+     
     </div>
   </div>  <div id="result" style="display:none; padding: 1rem; background-color: #c8e6c9;">
     <h2>Test Submitted!</h2>
@@ -317,6 +362,23 @@ questionBox.addEventListener('touchend', e => {
   handleGesture();
 });
     document.getElementById("test-title").innerText = subjectName;
+function loadQuestion(index) {
+  visited[index] = true;
+  currentIndex = index;
+  const question = questions[index];
+  document.getElementById("question-number").innerText = `Question No. ${index + 1}`;
+  document.getElementById("question-text").innerText = question.q;
+  const optionsHTML = question.options.map((opt, i) => {
+    return `<label><input type="radio" name="option" value="${i}" ${answers[index] == i ? 'checked' : ''}> ${opt}</label>`;
+  }).join('');
+  document.getElementById("options").innerHTML = optionsHTML;
+  updateGridColors();
 
+  // Auto-scroll selected question into view
+  const currentDiv = document.getElementById(`q${index}`);
+  if (currentDiv) {
+    currentDiv.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
+  }
+}
   </script></body>
 </html>
