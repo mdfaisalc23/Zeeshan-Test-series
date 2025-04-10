@@ -9,7 +9,11 @@
       background-color: #f2fff4;
       margin: 0;
       padding: 0;
+  overflow: hidden;
+    overflow: hidden;
+  
     }
+    
     header {
       background-color: #b9f6ca;
       padding: 1rem;
@@ -17,6 +21,7 @@
       font-size: 24px;
       font-weight: bold;
       position: relative;
+      height:50px;
     }
     #timer {
       position: absolute;
@@ -68,14 +73,15 @@
     }
      .question-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   gap: 10px;
-  margin-top: 1rem;
-  max-height: 220px;
+  margin-top: .5rem;
+  max-height: 150px;
   overflow-y: auto;
   padding: 10px;
   background-color: white; /* Light green-yellow background */
   border-radius: 8px;
+
 }
     .question-grid div {
       width: 30px;
@@ -123,19 +129,31 @@
   transition: background 0.3s;
   color: white;
 }
-
+#detailed-review {
+  display: none;
+  max-height: 70vh; /* Allows scrolling within the viewport */
+  overflow-y: auto;
+  padding: 1rem;
+  background-color: #e8f5e9;
+  border-radius: 10px;
+  margin-top: 1rem;
+  box-sizing: border-box;
+}
 /* Individual button colors */
-.btn-group button:nth-child(1) { background-color: #fff176; color: black; }   /* Mark for Review (Yellow) */
-.btn-group button:nth-child(1):active { background-color: #fdd835; }
+.btn-group button:nth-child(1) { background-color: #ffd240; color: black; }   /* Mark for Review (Yellow) */
+.btn-group button:nth-child(1):active { background-color: #d6ad24; }
 
-.btn-group button:nth-child(2) { background-color: #64b5f6; }   /* Clear Response (Blue) */
-.btn-group button:nth-child(2):active { background-color: #1976d2; }
+.btn-group button:nth-child(2) { background-color: #289bfa; }   /* Clear Response (Blue) */
+.btn-group button:nth-child(2):active { background-color: #126ab3; }
 
-.btn-group button:nth-child(3) { background-color: #81c784; }   /* Save & Next (Green) */
-.btn-group button:nth-child(3):active { background-color: #388e3c; }
+.btn-group button:nth-child(3) { background-color: #4caf50; }   /* Save & Next (Green) */
+.btn-group button:nth-child(3):active { background-color: #139458; }
 
-.btn-group button:nth-child(4) { background-color: #ef9a9a; }   /* Submit (Red) */
-.btn-group button:nth-child(4):active { background-color: #c62828; }
+.btn-group button:nth-child(4) { background-color: #f54842;
+  width :200px;
+  
+}   /* Submit (Red) */
+.btn-group button:nth-child(4):active { background-color: #b8241f; }
 
 #result button {
   background-color: #00796b;
@@ -184,6 +202,10 @@
     <div style="display: flex; align-items: center; gap: 5px;">
       <div style="width: 20px; height: 20px; background-color: #f44336; border-radius: 50%;"></div> Not Answered
     </div>
+    <div style="margin: 20px;">
+  <span style="display: inline-block; width: 20px; height: 20px; background-color: #e0e0e0; vertical-align: middle;border-radius: 50%;"></span>
+  <span style="margin-left: 8px;">Not Visited</span>
+</div>
   </div>
 </div>
       </div>
@@ -198,7 +220,16 @@
     <button onclick="location.reload()">Restart</button>
     <button onclick="toggleReview()">Show Detailed Review</button>
     <div id="detailed-review" style="display:none;"></div>
-  </div>  <script>
+  </div>  
+  <div id="submit-warning" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.6); z-index:9999; justify-content:center; align-items:center;">
+  <div style="background:#fff; padding:2rem; border-radius:10px; max-width:400px; text-align:center;">
+    <h3>Confirm Submission</h3>
+    <p>Are you sure you want to submit the test?</p>
+    <button onclick="confirmSubmit(true)" style="background:#d32f2f; color:white; padding:0.5rem 1.5rem; margin:0.5rem; border:none; border-radius:5px;">Yes, Submit</button>
+    <button onclick="confirmSubmit(false)" style="background:#4caf50; color:white; padding:0.5rem 1.5rem; margin:0.5rem; border:none; border-radius:5px;">Cancel</button>
+  </div>
+</div>
+  <script>
     
     let currentIndex = 0;
     const answers = new Array(questions.length).fill(null);
@@ -267,20 +298,27 @@
       }
     }
 
-    function submitTest() {
-      updateAnswer();
-      clearInterval(timer);
-      let score = 0;
-      questions.forEach((q, i) => {
-        if (answers[i] === q.answer) score++;
-      });
-      const percent = ((score / questions.length) * 100).toFixed(2);
-      document.getElementById("score").innerHTML = `Marks: ${score}/${questions.length}<br>Percentage: ${percent}%`;
-
-      document.getElementById("main-container").style.display = "none";
-      document.getElementById("result").style.display = "block";
-    }
-
+ function submitTest() {
+  document.getElementById("submit-warning").style.display = "flex";
+}
+function confirmSubmit(confirmed) {
+  document.getElementById("submit-warning").style.display = "none";
+  if (!confirmed) return;
+  
+  updateAnswer();
+  clearInterval(timer);
+  
+  let score = 0;
+  questions.forEach((q, i) => {
+    if (answers[i] === q.answer) score++;
+  });
+  
+  const percent = ((score / questions.length) * 100).toFixed(2);
+  document.getElementById("score").innerHTML = `Marks: ${score}/${questions.length}<br>Percentage: ${percent}%`;
+  
+  document.getElementById("main-container").style.display = "none";
+  document.getElementById("result").style.display = "block";
+}
   
     function toggleReview() {
       const review = document.getElementById("detailed-review");
@@ -304,7 +342,11 @@
                 return `<div>${String.fromCharCode(65 + idx)}. ${opt}</div>`;
               }
             }).join('')}
-            <em>Your Answer: ${userAns !== null ? q.options[userAns] : "Not Answered"}</em><br>
+            <em>Your Answer: ${
+  userAns !== null
+  ? q.options[userAns]
+  : "<span style='color: orange;'>Not Answered</span>"
+  }</em><br>
             <em>Correct Answer: ${q.options[q.answer]}</em>
           </div>`;
         });
@@ -366,7 +408,7 @@ function loadQuestion(index) {
   visited[index] = true;
   currentIndex = index;
   const question = questions[index];
-  document.getElementById("question-number").innerText = `Question No. ${index + 1}`;
+  document.getElementById("question-number").innerText = `Question No. ${index + 1}`+"/"+ questions.length;
   document.getElementById("question-text").innerText = question.q;
   const optionsHTML = question.options.map((opt, i) => {
     return `<label><input type="radio" name="option" value="${i}" ${answers[index] == i ? 'checked' : ''}> ${opt}</label>`;
@@ -379,6 +421,25 @@ function loadQuestion(index) {
   if (currentDiv) {
     currentDiv.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
   }
-}
-  </script></body>
+}reviewHTML += `<div style='margin-bottom:1.5rem; padding: 1rem; background: #fff; border-radius: 8px; box-shadow: 0 0 5px rgba(0,0,0,0.1);'>
+  <strong>Q${i + 1}:</strong> ${q.q}<br>
+  ${q.options.map((opt, idx) => {
+    const correct = idx === q.answer;
+    const selected = idx === userAns;
+    if (selected && correct) {
+      return `<div style='color:green'>${String.fromCharCode(65 + idx)}. ${opt}</div>`;
+    } else if (selected && !correct) {
+      return `<div style='color:red'>${String.fromCharCode(65 + idx)}. ${opt}</div>`;
+    } else if (correct) {
+      return `<div style='color:green'>${String.fromCharCode(65 + idx)}. ${opt}</div>`;
+    } else {
+      return `<div>${String.fromCharCode(65 + idx)}. ${opt}</div>`;
+    }
+  }).join('')}
+  <em>Your Answer: ${userAns !== null ? q.options[userAns] : "Not Answered"}</em><br>
+  <em>Correct Answer: ${q.options[q.answer]}</em>
+</div>`;
+  </script>
+  
+  </body>
 </html>
