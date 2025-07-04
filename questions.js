@@ -115,5 +115,5 @@ const questions = [
   { q: "How many types of emergencies are there in India?", options: ["1", "2", "3", "4"], answer: 2 },
   { q: "Which of the following is NOT a feature of the Indian Constitution?", options: ["Single Citizenship", "Secularism", "Unicameral Legislature", "Parliamentary System"], answer: 2 },
   { q: "Who is the head of the State in India?", options: ["Prime Minister", "President", "Chief Justice", "Governor"], answer: 1 },
-  { q: "Which system of government does India follow?", options: ["Presidential", "Parliamentary", "Monarchical", "Federal"], answer: 1 },
+
 ];
